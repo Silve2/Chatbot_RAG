@@ -12,11 +12,26 @@ if __name__ == '__main__':
 
     st.title("My favorite chatbot")
 
-    question = st.text_input("Hello i'm a chatbot, do me a question:")
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
 
-    while True:
-        if question:
-            answer = query_engine.query(question)
-            for node in answer.source_nodes:
-                st.write(f"{node.text}" + f"[page number: {node.metadata['page_label']}]\n")
-        question = None
+    # Display chat messages from history on app rerun
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+
+    if prompt := st.chat_input("What is up?"):
+        # Display user message in chat message container
+        st.chat_message("user").markdown(prompt)
+        # Add user message to chat history
+        st.session_state.messages.append({"role": "user", "content": prompt})
+
+        response = query_engine.query(prompt)
+        # Display assistant response in chat message container
+        with st.chat_message("assistant"):
+            st.markdown(response)
+        # Add assistant response to chat history
+        st.session_state.messages.append({"role": "assistant", "content": response})
+
+
+
