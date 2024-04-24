@@ -18,9 +18,13 @@ The document in pdf format in the 'data' folder contains information about a law
   index = VectorStoreIndex.from_documents(documents)
   ```
 3. Query engine is a generic interface that allows you to ask question over your data.
-  A query engine takes in a natural language query, and returns a rich response.
+  A CitationQueryEngine takes in a natural language query, and returns a rich response with the Node citation in the document related to the senteces.
   ```
-  query_engine = index.as_query_engine()
+  query_engine = CitationQueryEngine.from_args(
+    index,
+    similarity_top_k=3,
+    citation_chunk_size=512,
+)
   ```
 4. After setting these components you can query to your document with this:
   ```
