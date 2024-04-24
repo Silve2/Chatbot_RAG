@@ -21,7 +21,10 @@ if __name__ == '__main__':
 
     index = load_index_from_storage(storage_context)
 
-    query_engine = index.as_query_engine()
+    query_engine = CitationQueryEngine.from_args(
+                    index,
+                    similarity_top_k=3,
+                    citation_chunk_size=512,)
 
     st.title("My favorite chatbot")
 
