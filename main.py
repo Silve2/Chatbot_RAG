@@ -1,12 +1,25 @@
 import streamlit as st
 import os
-from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
+from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, StorageContext, load_index_from_storage
 
 if __name__ == '__main__':
 
     os.environ["OPENAI_API_KEY"] = "YOUR_API_KEY"
     documents = SimpleDirectoryReader("data").load_data()
-    index = VectorStoreIndex.from_documents(documents)
+
+    #check if 'index' folder exist
+    if not os.path.exists("index") and not os.path.isdir("index"):
+        os.mkdir("index")
+        index = VectorStoreIndex.from_documents(documents)
+        index.storage_context.persist(persist_dir="index")
+
+    storage_context = StorageContext.from_defaults(persist_dir="index")
+
+    # uncomment if you want index your document in 'data' folder
+    #index = VectorStoreIndex.from_documents(documents)
+    #index.storage_context.persist(persist_dir="index")
+
+    index = load_index_from_storage(storage_context)
 
     query_engine = index.as_query_engine()
 
